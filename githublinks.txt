@@ -1,0 +1,9 @@
+https://github.com/the-diy-life/HTTP_server_on_STM32f407-STM32F4Discovery_with_STM32F4DIS-BB-LAN8720.git
+https://github.com/nopnop2002/Arduino-STM32-Ethernet-LAN8720.git
+
+https://github.com/istarc/stm32f4discovery-iot.git
+https://github.com/iwatake2222/DigitalCamera_STM32
+
+@Save camera taken data in SRAM using standard library, not HAL library
+https://github.com/iwatake2222/Camera_STM32_StdLib
+https://github.com/MaJerle/stm32f429.git

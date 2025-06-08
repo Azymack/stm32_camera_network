@@ -1,0 +1,43 @@
+To save camera-taken data to external SRAM on STM32F407 using the standard peripheral library (no HAL) and handle pixel data wider than 16 bits (e.g., 32 bits), here are some key points and guidance based on your requirements and common challenges:
+
+Handling >16-bit Pixel Data with STM32F407 DCMI and SRAM
+1. DCMI Data Width and Pixel Format
+The STM32F407's DCMI interface supports 8-bit and 14-bit data buses, and typically captures pixel data in 8, 10, or 12 bits per pixel formats.
+
+The "maximum pixel amount 16-bit" you mentioned likely refers to the default DMA buffer width or the pixel format configured in DCMI.
+
+To handle 32-bit pixel data (e.g., RGB888 or RGBA), you need to configure the DCMI and DMA to capture multiple bytes per pixel and store them accordingly.
+
+2. Using DMA with DCMI to Store Data to External SRAM
+You can configure DMA in double buffer mode to transfer DCMI data directly to external SRAM via FSMC (Flexible Static Memory Controller).
+
+The external SRAM must be configured and mapped correctly via FSMC for 16-bit or 32-bit wide access depending on your SRAM chip.
+
+DMA stream configuration must match the data width (half-word for 16-bit or word for 32-bit transfers).
+
+3. Extending Pixel Depth Beyond 16-bit
+If your camera outputs pixel data in a packed format (e.g., RGB565 16-bit), but you need 32-bit per pixel (e.g., RGB888), you must do pixel format conversion after capture.
+
+This conversion can be done in software after DMA transfer or by configuring the camera to output a compatible format if supported.
+
+Alternatively, capture raw data and expand pixel depth in a buffer before storing or processing.
+
+4. Using Standard Peripheral Library (No HAL)
+You will need to manually configure:
+
+DCMI registers for pixel format and capture mode.
+
+DMA registers for data transfer size and memory addresses.
+
+FSMC registers for external SRAM timing and bus width.
+
+Handle DMA interrupts to know when data transfer is complete.
+
+Implement pixel format conversion routines in your firmware.
+
+5. Common Issues and Solutions
+Data corruption in external SRAM: Ensure FSMC timing and bus width settings match your SRAM chip datasheet.
+
+DMA transfer size mismatch: DMA peripheral and memory data sizes must be consistent (e.g., 32-bit word transfers if storing 32-bit pixels).
+
+Pixel format mismatch: Camera output format must be compatible with your buffer format or converted afterward.

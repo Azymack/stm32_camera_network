@@ -1,0 +1,68 @@
+✅ Short Answer
+CubeMX does not provide a dedicated configuration option for LAN8720.
+But you can use the LAN8742 preset as a template — just manually adjust the PHY address and configuration in code.
+
+🔍 Why LAN8720 is Missing from CubeMX
+CubeMX supports LAN8742A by default since it's more commonly used with STM32 Nucleo and Discovery boards.
+
+LAN8720 and LAN8742 are both IEEE 802.3-compliant 10/100 Ethernet PHYs, and share the same interface: RMII.
+
+The key differences (like register sets) are minor and can be accounted for in low-level code (HAL or LwIP PHY driver).
+
+🛠️ How to Use LAN8720 in CubeMX
+Select LAN8742 in CubeMX (this sets up RMII pins and LwIP stack).
+
+After generating the code, modify these things manually:
+
+1. Set the correct PHY address
+By default, LAN8720 usually uses PHY address 0x01, while LAN8742 uses 0x00.
+
+In stm32f4xx_hal_conf.h or similar:
+
+c
+Copy
+Edit
+#define LAN8720A_PHY_ADDRESS    0x01U
+Or in ethernetif.c, modify:
+
+c
+Copy
+Edit
+#define DP83848_PHY_ADDRESS     0x01U // replace if there's a default one
+2. Adjust any PHY-specific functions (optional)
+If you're not using the default PHY driver or you run into link issues, modify the PHY register access or add delays.
+
+3. Check pin configuration (RMII)
+Make sure your clock input is 50MHz (LAN8720 requires this).
+
+Set RMII_REF_CLK as input from external oscillator (usually connected to LAN8720).
+
+Enable Ethernet global interrupt in CubeMX.
+
+4. Update CubeMX project without overriding your edits
+After initial configuration, don’t regenerate ethernetif.c or similar manually edited files.
+
+🧪 Testing Tips
+Use HAL_ETH_ReadPHYRegister() to test communication with the PHY:
+
+c
+Copy
+Edit
+uint32_t phyReg;
+HAL_ETH_ReadPHYRegister(&heth, 0x01, PHY_SR, &phyReg);
+If you get HAL_ERROR, it means the PHY isn’t responding — check:
+
+RMII wiring
+
+PHY address
+
+Clock input (50 MHz)
+
+📌 Summary
+There’s no CubeMX version that directly includes LAN8720.
+
+Use LAN8742 as a base.
+
+Manually change PHY address to 0x01, and tweak initialization code.
+
+Let me know if you want me to walk you through how to modify the generated code step-by-step or debug a link issue.
